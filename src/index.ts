@@ -1,12 +1,14 @@
+import configDotEnv from "./config";
 import express from "express";
 import { userRouter } from "./routes/users";
 import { logger } from "./middleware/logger";
 import { notFound } from "./middleware/not-found";
-import { config } from "dotenv";
-config({ path: "src/config/.env" }); //env library creates object in memory
+import { connect } from "./database/connection";
+
+configDotEnv(); //choose db and set environment
+connect(); //connect to db
 const app = express();
 
-console.log(process.env.FOO);
 app.use(logger);
 app.use("/api/v1/users", userRouter);
 app.use(notFound);
