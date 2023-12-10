@@ -11,7 +11,7 @@ type IAddress = {
   street: string;
   city: string;
   state?: string;
-  zip?: number;
+  zip?: string;
   country: string;
   houseNumber: number;
 };
@@ -24,8 +24,8 @@ type IUser = {
   phone: string;
   password: string;
   isBusiness: boolean;
-  isAdmin: boolean;
-  createdAt: Date;
+  isAdmin?: boolean;
+  createdAt?: Date;
 };
 
 // etc...

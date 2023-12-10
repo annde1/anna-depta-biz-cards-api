@@ -1,5 +1,5 @@
 import configDotEnv from "./config";
-import express from "express";
+import express, { json } from "express";
 import { userRouter } from "./routes/users";
 import { logger } from "./middleware/logger";
 import { notFound } from "./middleware/not-found";
@@ -9,6 +9,7 @@ configDotEnv(); //choose db and set environment
 connect(); //connect to db
 const app = express();
 
+app.use(json());
 app.use(logger);
 app.use("/api/v1/users", userRouter);
 app.use(notFound);
