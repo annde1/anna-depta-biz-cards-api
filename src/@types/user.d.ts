@@ -28,5 +28,13 @@ type IUser = {
   createdAt?: Date;
 };
 
+type ILogin = {
+  email: string;
+  password: string;
+};
+
+type IJWTPayload = {
+  email: string;
+};
 // etc...
-export { IUser, IName, IAddress, IImage };
+export { IUser, IName, IAddress, IImage, ILogin, IJWTPayload };
