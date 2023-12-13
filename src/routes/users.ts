@@ -5,58 +5,64 @@ import JWT from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { ILogin } from "../@types/user";
 
+//Create router
 const router = Router();
 
+//Route for getting all users
 router.get("/", async (req, res) => {
   try {
+    //find all users
     const allUsers = await User.find();
-
+    //Send as response the array of all users
     res.json(allUsers);
-  } catch (e) {
-    res.status(500).json({ message: "server error", e });
+  } catch (err) {
+    res.status(500).json({ message: "server error", err });
   }
 });
+
+//Route for creating new user. Middleware (validate registration) -> router
 router.post("/", validateRegistration, async (req, res) => {
   try {
     const userBody = req.body;
-
+    //Create new user with the details provided in body of the request
     const user = new User(userBody);
-
-    //a 12 salt hash
+    //alorithm 12 salt hash (encrypt the users password using the hash algorithm)
     user.password = await bcrypt.hash(user.password, 12);
-
+    //Save user's details in the database
     const saved = await user.save();
-
+    //Send response wth status 201 (OK) user saved
     res.status(201).json({ message: "Saved", user: saved });
-  } catch (e) {
-    res.status(400).json({ message: "An Error occured", e });
+  } catch (err) {
+    //If there was en error send status 400 with message
+    res.status(400).json({ message: "An Error occured", err });
   }
 });
-
+//Route for user login:
 router.post("/login", validateLogin, async (req, res) => {
-  //check the pass
+  //check the password and email types:
   const { email, password } = req.body as ILogin;
-
+  //Find the user in database:
   const user = await User.findOne({ email });
-
+  //If no user was found send response with status 400
   if (!user) {
     return res.status(400).json({
-      message: "Login failed Check your username and password and try again",
+      message: "Login failed. Incorrect email or password",
     });
   }
-
+  //Check the password provided by user with the hashed password stored in user object in the database. Returns true or false
   const isPasswordValid = await bcrypt.compare(password, user.password);
-
+  //If isPasswordValid returns false then respond with status 400
   if (!isPasswordValid) {
     return res.status(400).json({
-      message: "Login failed Check your username and password and try again",
+      message: "Incorrect password. Try again.",
     });
   }
-
+  //User details were correct, create JWT token
+  //Get secret from environment variables:
   const secret = process.env.JWT_SECRET!;
-
+  //Parameter 1:  payload, 2: secret key
   const jwt = JWT.sign({ email: user.email }, secret);
-
+  //Send the JWT token as response:
   res.json({ jwt });
 });
 
