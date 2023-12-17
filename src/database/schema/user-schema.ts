@@ -9,7 +9,7 @@ const userSchema = new Schema<IUser>({
   name: nameSchema,
   //TODO: add default picture
   image: { type: imageSchema, required: false, default: { alt: "", url: "" } },
-  address: addressSchema,
+  address: { type: addressSchema, required: true },
   phone: {
     required: true,
     type: String,
