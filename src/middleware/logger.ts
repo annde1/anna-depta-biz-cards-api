@@ -1,12 +1,9 @@
 import chalk from "chalk";
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import { RequestHandler } from "express";
 //If giving RequestHandler type to the function no need to use types to parameters (Request, Response, NextFunction)
 //Types in express:
 //Request, Response, NextFunction, RequestHandler, ErrorRequest handler
-type Person = {
-  name: string;
-  lastName: string;
-};
+
 const logger: RequestHandler = (req, res, next) => {
   //   console.log(req.method, req.url);
   console.log(chalk.blue(req.method, req.url));

@@ -4,12 +4,16 @@ import { validateLogin, validateRegistration } from "../middleware/validation";
 import { ILogin, IUser } from "../@types/user";
 import { createUser } from "../service/user-service";
 import { validateUser } from "../service/user-service";
+import { isAdminOrUser } from "../middleware/is-admin-or-user";
+import { isAdmin } from "../middleware/is-admin";
+import { isUser } from "../middleware/is-user";
+import { auth } from "../service/auth-service";
 
 //Create router
 const router = Router();
 
-//Route for getting all users. Check if isAdmin -> router
-router.get("/", async (req, res) => {
+//Route for getting all users. Access to this endpoint only for admin. Check if isAdmin -> router
+router.get("/", isAdmin, async (req, res) => {
   try {
     //Find all users in the databse using the User mongoose model
     const allUsers = await User.find();
@@ -20,6 +24,40 @@ router.get("/", async (req, res) => {
   }
 });
 
+//Route for getting user by id. Access to the endpoint only for account owner or admin. Check if isAdminOrUser -> router
+router.get("/:id", isAdminOrUser, async (req, res, next) => {
+  try {
+    //Retrieve id from request params
+    const { id } = req.params;
+    //Find the user by id in database
+    const user = (await User.findById(id).lean()) as IUser;
+    //Destructure password and the rest of user information
+    const { password, ...rest } = user;
+    //return user information
+    return res.json({ user: rest });
+  } catch (err) {
+    next(err);
+  }
+});
+
+//Route for complete update of user. Acces to this endpoint only for owner of the account. Check isUser, validate data (middleware) -> router
+router.put("/:id", isUser, validateRegistration, async (req, res, next) => {
+  //Hash password
+  req.body.password = await auth.hashPassword(req.body.password);
+  //Find and update user in database
+  const savedUser = (await User.findByIdAndUpdate(
+    { _id: req.params.id }, //filter
+    req.body, //data
+    { new: true } //return the modified document
+  )) as IUser;
+  //TODO : not null check ?? Ask why we need this check if we have middleware
+  if (!savedUser) {
+  }
+  // Destructure password and the rest of user information
+  const { password, ...rest } = savedUser;
+  //Send response with status 201 and user information
+  res.status(201).json(rest);
+});
 //Route for creating new user. Joi register validation -> router
 router.post("/", validateRegistration, async (req, res, next) => {
   try {
