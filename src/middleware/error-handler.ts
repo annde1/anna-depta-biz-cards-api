@@ -1,7 +1,7 @@
 // eror handler file
 //router file
 import { ErrorRequestHandler } from "express";
-import { BizCardsError } from "../../error/biz-cards-error";
+import { BizCardsError } from "../error/biz-cards-error";
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   //userService Error

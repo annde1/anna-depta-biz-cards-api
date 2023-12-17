@@ -1,6 +1,6 @@
 import { RequestHandler, Request } from "express";
-import { BizCardsError } from "../../error/biz-cards-error";
-import { auth } from "../../service/auth-service";
+import { BizCardsError } from "../error/biz-cards-error";
+import { auth } from "../service/auth-service";
 
 //Middleware for JWT check:
 //Extract the token function:
@@ -25,4 +25,4 @@ const validateToken: RequestHandler = (req, res, next) => {
   next();
 };
 
-export { validateToken };
+export { validateToken, extractToken };
