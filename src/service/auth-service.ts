@@ -11,6 +11,7 @@ const authService = {
     return bcrypt.compare(plainTextPassword, hash);
   },
   //Method for generating new JWT token (takes in one argument which is payload - user specific data ex.: email)
+  //TODO : in payload pass id instead of email
   generateJWT: (payload: IJWTPayload) => {
     const secret = process.env.JWT_SECRET!;
     return jwt.sign(payload, secret);

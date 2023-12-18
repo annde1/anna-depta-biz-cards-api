@@ -1,2 +1,20 @@
-### GET All users:
-GET http://localhost:8000/api/v1/users
+### REGISTER USER
+POST http://localhost:8000/api/v1/users
+Content-Type: application/json
+{
+    "name": {
+        "first": "John",
+        "last": "Wick"
+    },
+    "address": {
+        "city": "Tel-Aviv",
+        "houseNumber": 24,
+        "country": "Israel", 
+        "street": "Allenby",
+        "zip": "111"
+    },
+    "phone": "0500000000",
+    "email": "johnwick@gmail.com",
+    "password": "Abde123%$",
+    "isBusiness": true
+}

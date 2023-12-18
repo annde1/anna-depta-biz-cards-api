@@ -34,31 +34,37 @@ router.get("/:id", isAdminOrUser, async (req, res, next) => {
     //Destructure password and the rest of user information
     const { password, ...rest } = user;
     //return user information
+
     return res.json({ user: rest });
   } catch (err) {
     next(err);
   }
 });
 
-//Route for complete update of user. Acces to this endpoint only for owner of the account. Check isUser, validate data (middleware) -> router
+//Route for complete update of user. Access to this endpoint only for owner of the account. Check isUser, validate data (middleware) -> router
 router.put("/:id", isUser, validateRegistration, async (req, res, next) => {
-  //Hash password
-  req.body.password = await auth.hashPassword(req.body.password);
-  //Find and update user in database
-  const savedUser = (await User.findByIdAndUpdate(
-    { _id: req.params.id }, //filter
-    req.body, //data
-    { new: true } //return the modified document
-  )) as IUser;
-  //TODO : not null check ?? Ask why we need this check if we have middleware
-  if (!savedUser) {
+  try {
+    //Hash password
+    req.body.password = await auth.hashPassword(req.body.password);
+    //Find and update user in database
+    const savedUser = await User.findByIdAndUpdate(
+      { _id: req.params.id }, //filter
+      req.body, //data
+      { new: true } //return the modified document
+    );
+    //TODO : not null check ?? Ask why we need this check if we have middleware
+    // if (!savedUser) {
+    // }
+    // Destructure password and the rest of user information
+    const { password, ...rest } = savedUser;
+    //Send response with status 201 and user information
+    res.status(201).json(rest);
+  } catch (err) {
+    next(err);
   }
-  // Destructure password and the rest of user information
-  const { password, ...rest } = savedUser;
-  //Send response with status 201 and user information
-  res.status(201).json(rest);
 });
 //Route for creating new user. Joi register validation -> router
+
 router.post("/", validateRegistration, async (req, res, next) => {
   try {
     //Create new user by using createUser function
@@ -66,6 +72,7 @@ router.post("/", validateRegistration, async (req, res, next) => {
     //Return response with status 201 and message:
     res.status(201).json({ message: "Saved", user: saved });
   } catch (err) {
+    console.log("ERROR FROM CREATING USER");
     next(err);
   }
 });

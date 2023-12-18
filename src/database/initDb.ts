@@ -1,4 +1,17 @@
+import { Logger } from "../logs/logger";
+import { User } from "./model/user";
+import { users } from "./users";
 const initDb = async () => {
-  //TODO: add 3 users and 3 cards ...insert into
+  //Count the amount of users in databse
+  const usersCount = await User.countDocuments();
+  //If there are users in database then return
+  if (usersCount !== 0) return;
+  //Loop over the default array of users
+  for (let user of users) {
+    //Create new user and save
+    const saved = await new User(user).save();
+    //Log that user was saved
+    Logger.verbose("Added user: ", saved);
+  }
 };
 export { initDb };

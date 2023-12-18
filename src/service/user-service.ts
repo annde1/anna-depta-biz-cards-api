@@ -14,11 +14,13 @@ const createUser = async (userData: IUser) => {
   //Return the user
   return user.save();
 };
-
+//TODO : generate token with id instead of email
 //Helper function for validating the user (takes in email and password strings):
 const validateUser = async (email: string, password: string) => {
   //Find user in the databse by the provided email
   const user = await User.findOne({ email });
+  const id = user._id.toString();
+  console.log(id);
   //If no user was found then throw new Error
   if (!user) {
     throw new BizCardsError("Bad credentials", 401);
@@ -30,7 +32,7 @@ const validateUser = async (email: string, password: string) => {
     throw new BizCardsError("Bad Credentials", 401);
   }
   //Credentials were correct so generate new JWT token
-  const jwt = auth.generateJWT({ email });
+  const jwt = auth.generateJWT({ id });
 
   return { jwt };
 };

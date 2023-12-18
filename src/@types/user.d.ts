@@ -34,7 +34,7 @@ type ILogin = {
 };
 
 type IJWTPayload = {
-  email: string;
+  id: string;
 };
 
 export { IUser, IName, IAddress, IImage, ILogin, IJWTPayload };

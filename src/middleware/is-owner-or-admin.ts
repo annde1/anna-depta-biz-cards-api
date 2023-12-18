@@ -1,0 +1,1 @@
+//TODO : function that will check if the user is owner of the card or admin: user needs to send jwt token in the headers. Verify token and get payload -> search in the database by id. if user isAdmin, if id from jwt == user.id

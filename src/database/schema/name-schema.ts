@@ -13,7 +13,7 @@ const nameSchema = new Schema<IName>({
     required: false,
     default: "",
     type: String,
-    minlength: 2,
+    minlength: 0,
     maxlength: 20,
   },
   last: {

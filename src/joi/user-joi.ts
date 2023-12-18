@@ -20,7 +20,7 @@ const schema = Joi.object<IUser>({
   password: Joi.string().pattern(passwordRegex).min(5).max(30).required(),
   phone: Joi.string().pattern(phoneRegex).min(1).max(50).required(),
   image: Joi.object<IImage>({
-    alt: Joi.string().min(0).max(100).allow(""),
+    alt: Joi.string().min(5).max(100).required(),
     url: Joi.string().uri().min(5).max(255).required(),
   }),
   isBusiness: Joi.boolean().required(),

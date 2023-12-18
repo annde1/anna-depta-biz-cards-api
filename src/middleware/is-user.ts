@@ -11,10 +11,10 @@ const isUser: RequestHandler = async (req, res, next) => {
     const { id } = req.params;
     //Get token
     const token = extractToken(req);
-    //Get email from payload
-    const { email } = auth.verifyJWT(token);
-    //Find user by email in the database
-    const user = await User.findOne({ email });
+    //Get id from payload
+    const { id: userId } = auth.verifyJWT(token);
+    //Find user by id in the database
+    const user = await User.findById(userId);
 
     //If no user was found then throw error
     if (!user) throw new BizCardsError("User does not exist", 401);

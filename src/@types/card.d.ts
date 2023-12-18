@@ -1,4 +1,3 @@
-//TODO : create type for card
 import { IAddress, IImage } from "./user";
 
 type ICard = {
