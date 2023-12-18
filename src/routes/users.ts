@@ -56,9 +56,10 @@ router.put("/:id", isUser, validateRegistration, async (req, res, next) => {
     // if (!savedUser) {
     // }
     // Destructure password and the rest of user information
-    const { password, ...rest } = savedUser;
+    const { password, ...rest } = savedUser; //TODO : _doc is the real user data, send this
     //Send response with status 201 and user information
-    res.status(201).json(rest);
+    console.log(rest); //?? Ask how to access the _doc
+    res.status(201).json({ message: "User Updated", userDetails: rest });
   } catch (err) {
     next(err);
   }
