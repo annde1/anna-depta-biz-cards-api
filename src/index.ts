@@ -15,7 +15,7 @@ app.use(cors({ origin: "http://localhost:5173/" })); //???
 //Parse request body to json format
 app.use(json());
 //Use morgan library to print to console request data
-app.use(morgan("dev"));
+app.use(morgan("dev")); //use combined
 //Go to router
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/cards", cardsRouter);

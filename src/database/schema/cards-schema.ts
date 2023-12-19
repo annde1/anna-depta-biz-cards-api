@@ -2,7 +2,7 @@ import { Schema } from "mongoose";
 import imageSchema from "./image-schema";
 import { ICard } from "../../@types/card";
 import { addressSchema } from "./address-schema";
-
+//TODO : finish card schema
 const cardSchema = new Schema<ICard>({
   title: {
     required: true,
@@ -50,6 +50,24 @@ const cardSchema = new Schema<ICard>({
     },
   },
   address: { type: addressSchema, required: true },
+  userId: { type: String, required: true },
+  bizNumber: {
+    type: Number,
+    required: false,
+    //we will fill this field in the card-service
+    default: () => Math.round(Math.random() * 1_000_000),
+    unique: true,
+  },
+  createdAt: {
+    type: Date,
+    required: false,
+    default: new Date(),
+  },
+  likes: [
+    {
+      type: String,
+    },
+  ],
 });
 
 export default cardSchema;

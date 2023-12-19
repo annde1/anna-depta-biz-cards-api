@@ -25,10 +25,10 @@ const isAdmin: RequestHandler = async (req, res, next) => {
   //Extract the token
   const token = extractToken(req);
   //Verify JWT token and get email from payload
-  const { id } = auth.verifyJWT(token);
+  const { email } = auth.verifyJWT(token);
 
   //Find admin in the database
-  const user = await User.findById(id);
+  const user = await User.findOne({ email });
 
   //Returns true or false
   const isAdmin = user?.isAdmin;

@@ -26,6 +26,7 @@ type IUser = {
   isBusiness: boolean;
   isAdmin?: boolean;
   createdAt?: Date;
+  _id?: string;
 };
 
 type ILogin = {
@@ -34,7 +35,7 @@ type ILogin = {
 };
 
 type IJWTPayload = {
-  id: string;
+  email: string;
 };
 
 export { IUser, IName, IAddress, IImage, ILogin, IJWTPayload };

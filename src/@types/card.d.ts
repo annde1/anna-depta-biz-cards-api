@@ -1,14 +1,19 @@
-import { IAddress, IImage } from "./user";
-
-type ICard = {
+export type ICardInput = {
   title: string;
   subtitle: string;
   description: string;
   phone: string;
   email: string;
-  web?: string;
-  image?: IImage;
+  web: string;
   address: IAddress;
+  image: Image;
 };
 
-export { ICard };
+export type ICard = ICardInput & {
+  bizNumber?: number;
+  userId?: string;
+
+  _id?: string;
+  likes: string[];
+  createdAt: Date;
+};

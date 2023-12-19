@@ -12,11 +12,11 @@ const isAdminOrUser: RequestHandler = async (req, res, next) => {
     //Extract token
     const token = extractToken(req);
     //Verify token and retrieve email from payload
-    // const { email } = auth.verifyJWT(token);
-    const { id: userId } = auth.verifyJWT(token);
+    const { email } = auth.verifyJWT(token);
+
     //Find user by email in the database
-    // const user = await User.findOne({ email });
-    const user = await User.findById(userId);
+    const user = await User.findOne({ email });
+
     console.log(user);
     //If no user was found then throw error
     if (!user) throw new BizCardsError("User does not exist", 401);

@@ -8,6 +8,7 @@ import { isAdminOrUser } from "../middleware/is-admin-or-user";
 import { isAdmin } from "../middleware/is-admin";
 import { isUser } from "../middleware/is-user";
 import { auth } from "../service/auth-service";
+import { Logger } from "../logs/logger";
 
 //Create router
 const router = Router();
@@ -26,6 +27,7 @@ router.get("/", isAdmin, async (req, res) => {
 
 //Route for getting user by id. Access to the endpoint only for account owner or admin. Check if isAdminOrUser -> router
 router.get("/:id", isAdminOrUser, async (req, res, next) => {
+  //TODO : move to service
   try {
     //Retrieve id from request params
     const { id } = req.params;
@@ -44,6 +46,7 @@ router.get("/:id", isAdminOrUser, async (req, res, next) => {
 //Route for complete update of user. Access to this endpoint only for owner of the account. Check isUser, validate data (middleware) -> router
 router.put("/:id", isUser, validateRegistration, async (req, res, next) => {
   try {
+    //TODO : move to serivce
     //Hash password
     req.body.password = await auth.hashPassword(req.body.password);
     //Find and update user in database
@@ -86,9 +89,22 @@ router.post("/login", validateLogin, async (req, res, next) => {
     //Validate the user with validateUser function (returns new JWT token):
     const jwt = await validateUser(email, password);
     //Send the response with generated JWT token
-    res.json(jwt);
+    res.status(201).json({ message: "OK", token: jwt });
   } catch (err) {
     next(err);
+  }
+});
+router.delete("/:id", isAdminOrUser, async (req, res, next) => {
+  try {
+    //TODO : add a check if no user was found then return error. Move to service
+    const { id } = req.params;
+    const deleteUser = await User.findOneAndDelete({ _id: id });
+    Logger.verbose("deleted the user");
+    return res
+      .status(201)
+      .json({ message: "Deleted", userDetails: deleteUser });
+  } catch (e) {
+    next(e);
   }
 });
 
