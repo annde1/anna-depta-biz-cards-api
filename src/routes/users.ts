@@ -9,6 +9,7 @@ import { isAdmin } from "../middleware/is-admin";
 import { isUser } from "../middleware/is-user";
 import { auth } from "../service/auth-service";
 import { Logger } from "../logs/logger";
+import { BizCardsError } from "../error/biz-cards-error";
 
 //Create router
 const router = Router();
@@ -54,7 +55,7 @@ router.put("/:id", isUser, validateRegistration, async (req, res, next) => {
       { _id: req.params.id }, //filter
       req.body, //data
       { new: true } //return the modified document
-    );
+    ).lean();
     //TODO : not null check ?? Ask why we need this check if we have middleware
     // if (!savedUser) {
     // }
@@ -82,6 +83,7 @@ router.post("/", validateRegistration, async (req, res, next) => {
 });
 
 //Route for user login. Joi login validation -> router
+
 router.post("/login", validateLogin, async (req, res, next) => {
   try {
     //Check the request and destructure email and password:
@@ -94,6 +96,8 @@ router.post("/login", validateLogin, async (req, res, next) => {
     next(err);
   }
 });
+
+//Route for deleting user
 router.delete("/:id", isAdminOrUser, async (req, res, next) => {
   try {
     //TODO : add a check if no user was found then return error. Move to service
@@ -105,6 +109,32 @@ router.delete("/:id", isAdminOrUser, async (req, res, next) => {
       .json({ message: "Deleted", userDetails: deleteUser });
   } catch (e) {
     next(e);
+  }
+});
+//Route for changing business status of user. This endpoint is only avaiable for owner of the account
+router.patch("/:id", isUser, async (req, res, next) => {
+  //TODO : move to service
+  try {
+    //Get id of the user from request params
+    const { id } = req.params;
+    //Find user in the database:
+    const user = (await User.findById(id).lean()) as IUser;
+    //If no user was found then throw error
+    if (!user) {
+      throw new BizCardsError("User not found", 404);
+    }
+    //Set new status based on the current status
+    const newStatus = !user.isBusiness;
+    //Find user and update
+    const updateUser = await User.findByIdAndUpdate(
+      { _id: id },
+      { isBusiness: newStatus },
+      { new: true }
+    );
+    Logger.info("Business Status Updated");
+    res.status(201).json({ message: "Updated", user: updateUser });
+  } catch (err) {
+    next(err);
   }
 });
 
