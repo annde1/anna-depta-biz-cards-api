@@ -16,8 +16,6 @@ const isAdminOrUser: RequestHandler = async (req, res, next) => {
 
     //Find user by email in the database
     const user = await User.findOne({ email });
-
-    console.log(user);
     //If no user was found then throw error
     if (!user) throw new BizCardsError("User does not exist", 401);
     //If user or admin was found go to next in the chain

@@ -18,5 +18,6 @@ const createCard = async (data: ICardInput, userId: string) => {
 
   return card.save();
 };
+export const likeCard = async () => {};
 
 export { createCard };
