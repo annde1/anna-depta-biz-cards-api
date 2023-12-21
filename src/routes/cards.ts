@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { isBusiness } from "../middleware/is-business";
 import { validateCard } from "../middleware/validation";
-import { createCard } from "../service/card-service";
+import { createCard, likeCard } from "../service/card-service";
 import { ICardInput } from "../@types/card";
 import { BizCardsError } from "../error/biz-cards-error";
 import { Card } from "../database/model/card";
@@ -48,7 +48,7 @@ router.get("/my-cards", validateToken, async (req, res, next) => {
     //Find cards that belong to the user in the database
     const cards = await Card.find({ userId });
     //Return response with status and cards
-    return res.status(201).json({ message: "OK", cards: cards });
+    res.status(201).json({ message: "OK", cards: cards });
   } catch (err) {
     next(err);
   }
@@ -78,27 +78,16 @@ router.get("/:id", async (req, res, next) => {
 
 router.patch("/:id", isBusiness, async (req, res, next) => {
   try {
+    //Get card id from the request params
     const { id } = req.params;
+    //Get users userId from req.user
     const userId = req.user._id;
-    const card = await Card.findById(id);
-    if (!card) {
-      res.status(404).json({ message: "Card Not Found" });
-      throw new BizCardsError("Card Not Found", 404);
-    }
-    //Check if userId exists in likes array. Returns true or false
-    const isLiked = card.likes.includes(userId);
-    //If isLiked is true then remove userId from the array by $pull, if it's false then add userId to likes array
-    const updateLikesArray = isLiked
-      ? { $pull: { likes: userId } }
-      : { $push: { likes: userId } };
-
-    const updatedCard = await Card.findByIdAndUpdate(id, updateLikesArray, {
-      new: true,
-    });
+    //
+    const updatedCard = await likeCard(id, userId, res);
     if (!updatedCard) {
-      res.status(404).json({ message: "Card Not Found" });
+      res.status(404).json({ message: "Card not found" });
     }
-    res.status(201).json({ message: "OK", cardDetails: updatedCard });
+    res.status(201).json({ message: "Liked", cardDetails: updatedCard });
   } catch (err) {
     next(err);
   }

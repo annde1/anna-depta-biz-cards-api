@@ -1,5 +1,7 @@
 import { Card } from "../database/model/card";
+import { BizCardsError } from "../error/biz-cards-error";
 import { ICardInput } from "./../@types/card.d";
+import { Response } from "express";
 const createCard = async (data: ICardInput, userId: string) => {
   //bizNumber, userId
   const card = new Card(data);
@@ -18,6 +20,29 @@ const createCard = async (data: ICardInput, userId: string) => {
 
   return card.save();
 };
-export const likeCard = async () => {};
+export const likeCard = async (
+  cardId: string,
+  userId: string,
+  res: Response
+) => {
+  const card = await Card.findById(cardId);
+  if (!card) {
+    throw new BizCardsError("Card doesn't exist", 404);
+  }
+  //Check if userId exists in likes array. Returns true or false
+  const isLiked = card.likes.includes(userId);
+  //If isLiked is true then remove userId from the array by $pull, if it's false then add userId to likes array
+  const updateLikesArray = isLiked
+    ? { $pull: { likes: userId } }
+    : { $push: { likes: userId } };
+
+  const updatedCard = await Card.findByIdAndUpdate(cardId, updateLikesArray, {
+    new: true,
+  });
+  if (!updatedCard) {
+    throw new BizCardsError("Card Doesn't Exist", 404);
+  }
+  return updatedCard;
+};
 
 export { createCard };

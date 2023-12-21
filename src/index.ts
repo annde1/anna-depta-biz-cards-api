@@ -6,6 +6,7 @@ import { connect } from "./database/connection";
 import morgan from "morgan";
 import cors from "cors";
 import { cardsRouter } from "./routes/cards";
+import { errorHandler } from "./middleware/error-handler";
 
 configDotEnv(); //choose db and set environment
 connect(); //connect to db
@@ -20,7 +21,9 @@ app.use(morgan("dev")); //use combined
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/cards", cardsRouter);
 //If request endpoint was inncorrect then run the notFounf function
+app.use(errorHandler);
 app.use(notFound);
+
 //How to kill port:
 // pnpx kill-port 8000
 //Listen to request on port 8000
