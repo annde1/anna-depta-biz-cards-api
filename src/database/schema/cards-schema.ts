@@ -2,7 +2,7 @@ import { Schema } from "mongoose";
 import imageSchema from "./image-schema";
 import { ICard } from "../../@types/card";
 import { addressSchema } from "./address-schema";
-//TODO : finish card schema
+
 const cardSchema = new Schema<ICard>({
   title: {
     required: true,
@@ -43,18 +43,16 @@ const cardSchema = new Schema<ICard>({
   image: {
     type: imageSchema,
     required: false,
-    //TODO : add default image
     default: {
       alt: "People",
       url: "https://img.freepik.com/free-vector/people-analyzing-growth-charts_23-2148866843.jpg?w=1380&t=st=1702916299~exp=1702916899~hmac=6b95e1dba15ac5d47c9e0ae5937febe8eae6137783ad4236f83f87b9c8c0eee6",
     },
   },
   address: { type: addressSchema, required: true },
-  userId: { type: String, required: true },
+  userId: { type: String, required: true, default: "Unknown" },
   bizNumber: {
     type: Number,
     required: false,
-    //we will fill this field in the card-service
     default: () => Math.round(Math.random() * 1_000_000),
     unique: true,
   },

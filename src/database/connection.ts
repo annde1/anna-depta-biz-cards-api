@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { initDb } from "./initDb";
+
 const connect = async () => {
   try {
     //read the connection string from dev.env

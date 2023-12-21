@@ -76,5 +76,30 @@ export const editUser = async (userId: string, requestBody: any) => {
   return rest;
 };
 
-export const deleteUser = async (userId: string) => {};
+export const deleteUser = async (userId: string) => {
+  ///Find user in the database and delete
+  const deletedUser = await User.findOneAndDelete({ _id: userId });
+  if (!deletedUser) {
+    throw new BizCardsError("User not found", 404);
+  }
+  return deleteUser;
+};
+
+export const changeBizStatus = async (userId: string) => {
+  //Find user in the database:
+  const user = (await User.findById(userId).lean()) as IUser;
+  //If no user was found then throw error
+  if (!user) {
+    throw new BizCardsError("User not found", 404);
+  }
+  //Set new status based on the current status
+  const newStatus = !user.isBusiness;
+  //Find user and update
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { isBusiness: newStatus },
+    { new: true }
+  );
+  return updatedUser;
+};
 export { createUser, validateUser };

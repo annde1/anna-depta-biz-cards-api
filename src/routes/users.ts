@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { User } from "../database/model/user";
 import { validateLogin, validateRegistration } from "../middleware/validation";
 import { ILogin, IUser } from "../@types/user";
 import {
+  changeBizStatus,
   createUser,
+  deleteUser,
   editUser,
   getAllUsers,
   getUserById,
@@ -12,9 +13,6 @@ import { validateUser } from "../service/user-service";
 import { isAdminOrUser } from "../middleware/is-admin-or-user";
 import { isAdmin } from "../middleware/is-admin";
 import { isUser } from "../middleware/is-user";
-import { auth } from "../service/auth-service";
-import { Logger } from "../logs/logger";
-import { BizCardsError } from "../error/biz-cards-error";
 
 //Create router
 const router = Router();
@@ -85,41 +83,28 @@ router.post("/login", validateLogin, async (req, res, next) => {
   }
 });
 
-//Route for deleting user
+//Route for deleting user. Access to this endpoint only for admin or owner of the account
 router.delete("/:id", isAdminOrUser, async (req, res, next) => {
   try {
-    //TODO : add a check if no user was found then return error. Move to service
+    //retrieve id from request params
     const { id } = req.params;
-    const deleteUser = await User.findOneAndDelete({ _id: id });
-    return res
-      .status(201)
-      .json({ message: "Deleted", userDetails: deleteUser });
-  } catch (e) {
-    next(e);
+    //Delete user
+    const deletedUser = await deleteUser(id);
+    //Return response with status, message and user details
+    res.status(201).json({ message: "Deleted", userDetails: deletedUser });
+  } catch (err) {
+    next(err);
   }
 });
 //Route for changing business status of user. This endpoint is only avaiable for owner of the account
 router.patch("/:id", isUser, async (req, res, next) => {
-  //TODO : move to service
   try {
     //Get id of the user from request params
     const { id } = req.params;
-    //Find user in the database:
-    const user = (await User.findById(id).lean()) as IUser;
-    //If no user was found then throw error
-    if (!user) {
-      throw new BizCardsError("User not found", 404);
-    }
-    //Set new status based on the current status
-    const newStatus = !user.isBusiness;
-    //Find user and update
-    const updateUser = await User.findByIdAndUpdate(
-      { _id: id },
-      { isBusiness: newStatus },
-      { new: true }
-    );
-    Logger.info("Business Status Updated");
-    res.status(201).json({ message: "Updated", user: updateUser });
+    //Update user
+    const updatedUser = await changeBizStatus(id);
+    //Return response with status, message and user details
+    res.status(201).json({ message: "Updated", userDetails: updatedUser });
   } catch (err) {
     next(err);
   }
