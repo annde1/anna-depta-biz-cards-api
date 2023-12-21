@@ -2,7 +2,12 @@ import { Router } from "express";
 import { User } from "../database/model/user";
 import { validateLogin, validateRegistration } from "../middleware/validation";
 import { ILogin, IUser } from "../@types/user";
-import { createUser } from "../service/user-service";
+import {
+  createUser,
+  editUser,
+  getAllUsers,
+  getUserById,
+} from "../service/user-service";
 import { validateUser } from "../service/user-service";
 import { isAdminOrUser } from "../middleware/is-admin-or-user";
 import { isAdmin } from "../middleware/is-admin";
@@ -17,10 +22,10 @@ const router = Router();
 //Route for getting all users. Access to this endpoint only for admin. Check if isAdmin -> router
 router.get("/", isAdmin, async (req, res) => {
   try {
-    //Find all users in the databse using the User mongoose model
-    const allUsers = await User.find();
-    //Send as response the array of all users
-    res.json(allUsers);
+    //Get users
+    const allUsers = await getAllUsers();
+    //Return response with status, message and users
+    res.status(201).json({ message: "OK", users: allUsers });
   } catch (err) {
     res.status(500).json({ message: "server error", err });
   }
@@ -28,17 +33,13 @@ router.get("/", isAdmin, async (req, res) => {
 
 //Route for getting user by id. Access to the endpoint only for account owner or admin. Check if isAdminOrUser -> router
 router.get("/:id", isAdminOrUser, async (req, res, next) => {
-  //TODO : move to service
   try {
     //Retrieve id from request params
     const { id } = req.params;
-    //Find the user by id in database
-    const user = (await User.findById(id).lean()) as IUser;
-    //Destructure password and the rest of user information
-    const { password, ...rest } = user;
-    //return user information
-
-    return res.json({ user: rest });
+    //Find user
+    const user = await getUserById(id);
+    //Return response with status, message and user detials
+    res.status(201).json({ message: "OK", userDetails: user });
   } catch (err) {
     next(err);
   }
@@ -47,29 +48,18 @@ router.get("/:id", isAdminOrUser, async (req, res, next) => {
 //Route for complete update of user. Access to this endpoint only for owner of the account. Check isUser, validate data (middleware) -> router
 router.put("/:id", isUser, validateRegistration, async (req, res, next) => {
   try {
-    //TODO : move to serivce
-    //Hash password
-    req.body.password = await auth.hashPassword(req.body.password);
-    //Find and update user in database
-    const savedUser = await User.findByIdAndUpdate(
-      { _id: req.params.id }, //filter
-      req.body, //data
-      { new: true } //return the modified document
-    ).lean();
-    //TODO : not null check ?? Ask why we need this check if we have middleware
-    // if (!savedUser) {
-    // }
-    // Destructure password and the rest of user information
-    const { password, ...rest } = savedUser; //TODO : _doc is the real user data, send this
+    //retrieve id from request params
+    const { id } = req.params;
+    //Edit user
+    const user = await editUser(id, req.body);
     //Send response with status 201 and user information
-    console.log(rest); //?? Ask how to access the _doc
-    res.status(201).json({ message: "User Updated", userDetails: rest });
+    res.status(201).json({ message: "User Updated", userDetails: user });
   } catch (err) {
     next(err);
   }
 });
-//Route for creating new user. Joi register validation -> router
 
+//Route for creating new user. Joi register validation -> router
 router.post("/", validateRegistration, async (req, res, next) => {
   try {
     //Create new user by using createUser function
@@ -77,13 +67,11 @@ router.post("/", validateRegistration, async (req, res, next) => {
     //Return response with status 201 and message:
     res.status(201).json({ message: "Saved", user: saved });
   } catch (err) {
-    console.log("ERROR FROM CREATING USER");
     next(err);
   }
 });
 
 //Route for user login. Joi login validation -> router
-
 router.post("/login", validateLogin, async (req, res, next) => {
   try {
     //Check the request and destructure email and password:
@@ -103,7 +91,6 @@ router.delete("/:id", isAdminOrUser, async (req, res, next) => {
     //TODO : add a check if no user was found then return error. Move to service
     const { id } = req.params;
     const deleteUser = await User.findOneAndDelete({ _id: id });
-    Logger.verbose("deleted the user");
     return res
       .status(201)
       .json({ message: "Deleted", userDetails: deleteUser });

@@ -1,2 +1,0 @@
-// 1.Ask how to convert the validate function to TS.
-//Bcrypt: we save in db salt and hash. Bcryp password: alorithm, rounds, salt, hash. Each user has unique salt (gen salt)
