@@ -7,6 +7,11 @@ import { auth } from "./auth-service";
 
 //Helper function for creating new user
 const createUser = async (userData: IUser) => {
+  //Check if users exists in the database:
+  const userExists = await existingUser(userData.email);
+  if (userExists) {
+    throw new BizCardsError("Email is already in use", 400);
+  }
   //Create new user from the user mongoose model:
   const user = new User(userData);
   //Hash and overwrite the user's password
@@ -19,20 +24,32 @@ const createUser = async (userData: IUser) => {
 const validateUser = async (email: string, password: string) => {
   //Find user in the databse by the provided email
   const user = await User.findOne({ email });
-
-  //If no user was found then throw new Error
+  //If user doesn't exist then throw error
   if (!user) {
-    throw new BizCardsError("Bad credentials", 401);
+    throw new BizCardsError("Bad credentials. Incorrect email", 401);
+  }
+  //In case user was blocked and release date > now then throw error (releaseDate is by default new Date())
+  if (user.releaseDate > new Date()) {
+    throw new BizCardsError("Account blocked. Try again later", 401);
   }
   //Compare password provided by user with password of the user found in the database
   const isPasswordValid = await auth.validatePassword(password, user.password);
-  //If the password doesn't match then throw error
-  if (!isPasswordValid) {
-    throw new BizCardsError("Bad Credentials", 401);
-  }
-  //Credentials were correct so generate new JWT token
-  const jwt = auth.generateJWT({ email });
 
+  //Password was not valid then push new date with failed login attemps to the array
+  if (!isPasswordValid) {
+    user.failedloginAttempts.push(new Date());
+    //If there were 3 or more failed login attemps set new releaseDate
+    if (user.failedloginAttempts.length >= 3) {
+      const currentDate = new Date();
+      user.releaseDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
+    }
+    //Save user information in the database
+    await user.save();
+    //Throw error
+    throw new BizCardsError("Incorrect password", 401);
+  }
+  //Credentials were correct so generate JWT token
+  const jwt = auth.generateJWT({ email });
   return { jwt };
 };
 
@@ -102,4 +119,12 @@ export const changeBizStatus = async (userId: string) => {
   );
   return updatedUser;
 };
+
+const existingUser = async (email: string) => {
+  //Check if user exsists in the database:
+  const user = await User.findOne({ email: email });
+  //Return the user data
+  return user;
+};
+
 export { createUser, validateUser };

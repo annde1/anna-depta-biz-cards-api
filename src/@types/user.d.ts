@@ -27,6 +27,8 @@ type IUser = {
   isAdmin?: boolean;
   createdAt?: Date;
   _id?: string;
+  failedloginAttempts?: Date[];
+  releaseDate?: Date;
 };
 
 type ILogin = {

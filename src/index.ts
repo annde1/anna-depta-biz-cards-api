@@ -24,4 +24,6 @@ app.use("/api/v1/cards", cardsRouter);
 app.use(errorHandler);
 app.use(notFound);
 //Listen to request on port 8000
-app.listen(8000);
+app.listen(8000, () => {
+  console.log("App running on port 8000");
+});

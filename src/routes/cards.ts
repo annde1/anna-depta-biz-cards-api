@@ -1,11 +1,13 @@
 import { Router } from "express";
 import { isBusiness } from "../middleware/is-business";
-import { validateCard } from "../middleware/validation";
+import { validateBizNumber, validateCard } from "../middleware/validation";
 import {
+  checkUniqueBizNumber,
   createCard,
   deleteCard,
   editCard,
   likeCard,
+  updateBizCardNumber,
 } from "../service/card-service";
 import { ICardInput } from "../@types/card";
 import { BizCardsError } from "../error/biz-cards-error";
@@ -14,6 +16,7 @@ import { validateToken } from "../middleware/validate-token";
 import isOwner from "../middleware/is-owner";
 import isOwnerOrAdmin from "../middleware/is-owner-or-admin";
 import { getCardById } from "../service/card-service";
+import { isAdmin } from "../middleware/is-admin";
 
 //Create new router
 const router = Router();
@@ -115,4 +118,18 @@ router.delete("/:id", isOwnerOrAdmin, async (req, res, next) => {
     next(err);
   }
 });
+
+//Route for changing bizNumber of card. This route is for admin only (BONUS)
+router.patch(
+  "/change-biz-number/:id",
+  isAdmin,
+  validateBizNumber,
+  checkUniqueBizNumber,
+  async (req, res, next) => {
+    const { id } = req.params;
+    const { bizNumber } = req.body;
+    const card = await updateBizCardNumber(id, bizNumber);
+    res.status(201).json({ message: "Biz Number Updated", cardDetails: card });
+  }
+);
 export { router as cardsRouter };

@@ -1,7 +1,7 @@
 import { Card } from "../database/model/card";
 import { BizCardsError } from "../error/biz-cards-error";
 import { ICardInput } from "./../@types/card.d";
-import { Response } from "express";
+import { RequestHandler, Response } from "express";
 import mongoose from "mongoose";
 const createCard = async (data: ICardInput, userId: string) => {
   //bizNumber, userId
@@ -77,4 +77,34 @@ export const deleteCard = async (cardId: string) => {
   return card;
 };
 
+export const checkUniqueBizNumber: RequestHandler = async (req, res, next) => {
+  //Retrieve biz number from the request body
+  const { bizNumber } = req.body;
+  //Find card in the database by the biz number
+  const card = await Card.findOne({ bizNumber: bizNumber });
+  //If no card was found go to next in the chain
+  if (!card) {
+    return next();
+  }
+  //Card was found so return response with status and error message
+  return res.status(400).json({ error: "BizNumber is already taken" });
+};
+
+export const updateBizCardNumber = async (
+  cardId: string,
+  bizNumber: number
+) => {
+  //Find card in the database and update bizNumber
+  const card = await Card.findByIdAndUpdate(
+    { _id: cardId },
+    { bizNumber: bizNumber },
+    { new: true }
+  );
+  //If no card was found throw error
+  if (!card) {
+    throw new BizCardsError("Card not found", 404);
+  }
+  //Return the card
+  return card;
+};
 export { createCard };
