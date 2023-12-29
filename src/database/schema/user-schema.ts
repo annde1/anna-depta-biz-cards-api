@@ -8,7 +8,7 @@ import { required } from "joi";
 
 const userSchema = new Schema<IUser>({
   name: { type: nameSchema, required: true },
-  //TODO: add default picture
+
   image: {
     type: imageSchema,
     required: false,

@@ -20,22 +20,3 @@ Content-Type: application/json
 }
 
 ### add a card: ### new card
-POST http://localhost:8000/api/v1/cards
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImphY2tpZUBnbWFpbC5jb20iLCJpYXQiOjE3MDI5ODY4OTh9.9E7HAQUdjBcZOcy9y5k2sQs_09QZt_Mwoa3Cf6yt6Os
-Content-Type: application/json
-
-{
-    "title": "new card check likes",
-    "subtitle": "new card ",
-    "description": "new card description",
-    "phone": "050-1234567",
-    "email": "e@gamil.com",
-    "web": "http://www.google.com",
-    "address": {
-        "city": "new city",
-        "country": "new country",
-        "street": "new street",
-        "houseNumber": 21
-    }
-    
-}

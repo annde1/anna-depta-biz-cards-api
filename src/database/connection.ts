@@ -6,17 +6,12 @@ const connect = async () => {
     console.log("Connecting to database");
     //read the connection string from dev.env
     const connectionStr = process.env.DB_CONNECTION_STRING!;
-    console.log(connectionStr);
-
+    //If no connection string then throw error and eturn
     if (!connectionStr) {
       console.error("DB_CONNECTION_STRING IS NOT DEFINED IN your .env file");
       return;
     }
-
-    mongoose.connection.on("error", (err) => {
-      console.log(err);
-    });
-
+    //connect to the database
     await mongoose.connect(connectionStr, {
       dbName: "biz_cards_dev",
       serverSelectionTimeoutMS: 1000, // Defaults to 30000 (30 seconds)

@@ -6,9 +6,8 @@ import mongoose from "mongoose";
 const createCard = async (data: ICardInput, userId: string) => {
   //bizNumber, userId
   const card = new Card(data);
+  card.userId = userId;
 
-  card.userId = userId; //?? doesnt work
-  console.log(card.userId);
   //random number that does not exist in the database:
   while (true) {
     const random = Math.floor(Math.random() * 1_000_000);
@@ -71,6 +70,7 @@ export const editCard = async (cardId: string, requestBody: any) => {
 
 export const deleteCard = async (cardId: string) => {
   const card = await Card.findByIdAndDelete(cardId, { new: true }).lean();
+
   if (!card) {
     throw new BizCardsError("Card not found", 404);
   }

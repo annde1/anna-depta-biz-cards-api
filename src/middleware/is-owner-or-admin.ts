@@ -17,6 +17,7 @@ const isOwnerOrAdmin: RequestHandler = async (req, res, next) => {
     const { email } = auth.verifyJWT(token);
     //Find user in the database
     const user = await User.findOne({ email });
+
     //If user was not found then throw error
     if (!user) {
       throw new BizCardsError("User not found", 401);
@@ -25,7 +26,8 @@ const isOwnerOrAdmin: RequestHandler = async (req, res, next) => {
     const userId = user._id;
     //Find the card in the database
     const card = await Card.findById(id);
-    if (card.likes.includes(userId)) {
+
+    if (card.userId === userId.toString()) {
       return next();
     }
     if (user.isAdmin) {

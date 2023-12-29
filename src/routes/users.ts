@@ -62,6 +62,7 @@ router.post("/", validateRegistration, async (req, res, next) => {
   try {
     //Create new user by using createUser function
     const saved = await createUser(req.body as IUser);
+    console.log(saved);
     //Return response with status 201 and message:
     res.status(201).json({ message: "Saved", user: saved });
   } catch (err) {

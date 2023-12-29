@@ -6,6 +6,7 @@ type ValidateSchema = (schema: ObjectSchema) => RequestHandler;
 
 const validateSchema: ValidateSchema = (schema) => (req, res, next) => {
   const error = validation(schema, req.body);
+  console.log(error);
 
   if (!error) return next();
 

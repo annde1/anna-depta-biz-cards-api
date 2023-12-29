@@ -16,14 +16,12 @@ app.use(express.static("public"));
 //Parse request body to json format
 app.use(json());
 //Use morgan library to print to console request data
-app.use(morgan("dev")); //use combined
+app.use(morgan("dev"));
 //Go to router
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/cards", cardsRouter);
-//If request endpoint was inncorrect then run the notFounf function
+//If request endpoint was inncorrect then run the notFound function
 app.use(errorHandler);
 app.use(notFound);
 //Listen to request on port 8000
-app.listen(8000, () => {
-  console.log("App running on port 8000");
-});
+app.listen(8000);
