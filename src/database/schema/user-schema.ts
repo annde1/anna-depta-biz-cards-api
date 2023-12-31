@@ -1,9 +1,9 @@
 import { Schema } from "mongoose";
-import { IName, IUser } from "../../@types/user";
+import { IUser } from "../../@types/user";
 import { nameSchema } from "./name-schema";
 import imageSchema from "./image-schema";
 import { addressSchema } from "./address-schema";
-import { required } from "joi";
+
 //Defining schema for mongoose. We set the structure of schema
 
 const userSchema = new Schema<IUser>({
