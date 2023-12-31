@@ -19,4 +19,77 @@ Content-Type: application/json
     "isBusiness": true
 }
 
-### add a card: ### new card
+### GET ALL USERS
+GET http://localhost:8000/api/v1/users
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imtlbm55MTJAZ21haWwuY29tIiwiaWF0IjoxNzA0MDEzNjIyfQ.PajCpTeEgT6jgjpQuU1ahbQrCYmQU9CoJ4-8ijx1I3g
+
+### USER LOGIN
+POST http://localhost:8000/api/v1/users/login
+Content-Type: application/json
+
+{
+    "email": "kenny12@gmail.com",
+    "password": "Abde124^%"
+}
+
+### DELETE USER
+DELETE http://localhost:8000/api/v1/users/658edd0a9f24bce584055793
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imtlbm55MTJAZ21haWwuY29tIiwiaWF0IjoxNzA0MDE0MDc3fQ.dHf6qH7NYL3mzzFsWxk1kZjzYKEJSNczaCNtafmDH_c
+
+### CHANGE BIZ STATUS
+PATCH http://localhost:8000/api/v1/users/658edf8993f00c5d4fef60a1
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imtlbm55MTJAZ21haWwuY29tIiwiaWF0IjoxNzA0MDE0MjU1fQ.67Bt1UURI1N6iu16Yy5QRfb_-vKRUuppIKOmfxEav3Y
+
+### EDIT USER
+PUT http://localhost:8000/api/v1/users/658edf8993f00c5d4fef60a1
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imtlbm55MTJAZ21haWwuY29tIiwiaWF0IjoxNzA0MDE0NDQ2fQ.O0120X0OQ19kIrcndBdKU7hLtl_o2E5gnNim3sK3R8A
+Content-Type: application/json
+
+{"name":{"first": "kenny","last": "testy"},"address": {"city": "tel-Aviv","houseNumber": 23,"zip": "123","street": "Ben Gurion","country": "Israel"},"phone": "0545623758","email": "kenny12@gmail.com","password": "Abde124^%","isBusiness": true}
+
+### GET USER BY ID:
+GET http://localhost:8000/api/v1/users/658edded36d799b278280d77
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imtlbm55MTJAZ21haWwuY29tIiwiaWF0IjoxNzA0MDE0NjQ5fQ.Z12ITCEvqMceoIopF4Twe2W9C3HMkSuvMEwy4Lxqm08
+
+
+///CARDS:
+
+### GET ALL CARDS:
+GET http://localhost:8000/api/v1/cards/
+
+### ADD NEW CARD
+POST http://localhost:8000/api/v1/cards/
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imtlbm55MTJAZ21haWwuY29tIiwiaWF0IjoxNzA0MDE0OTkwfQ.pX2sYaXcj6a1RUxHFlgPaV6z8AyTyMdOzWA0RWyNW5o
+Content-Type: application/json
+
+{"title": "New Card", "subtitle": "subtitle", "description": "Some Description", "phone": "0545302344", "email": "testemail@gmail.com", "web": "bizcards.co.il", "address": {"city": "Tel-Aviv", "houseNumber": 21, "street": "Allenby", "zip": "124", "country": "Israel"}}
+
+### GET USER CARDS
+GET http://localhost:8000/api/v1/cards/my-cards
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imtlbm55MTJAZ21haWwuY29tIiwiaWF0IjoxNzA0MDE0OTkwfQ.pX2sYaXcj6a1RUxHFlgPaV6z8AyTyMdOzWA0RWyNW5o
+
+### GET CARD BY ID:
+GET http://localhost:8000/api/v1/cards/658ee04a93f00c5d4fef60b3
+
+### DELETE CARD
+DELETE http://localhost:8000/api/v1/cards/658ee04a93f00c5d4fef60b3
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imtlbm55MTJAZ21haWwuY29tIiwiaWF0IjoxNzA0MDE0OTkwfQ.pX2sYaXcj6a1RUxHFlgPaV6z8AyTyMdOzWA0RWyNW5o
+
+### LIKE CARD:
+PATCH http://localhost:8000/api/v1/cards/6589dcbab76d074b5787507b
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imtlbm55MTJAZ21haWwuY29tIiwiaWF0IjoxNzA0MDE0OTkwfQ.pX2sYaXcj6a1RUxHFlgPaV6z8AyTyMdOzWA0RWyNW5o
+
+### EDIT CARD:
+PUT http://localhost:8000/api/v1/cards/6591361b9c1527085d951785
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imtlbm55MTJAZ21haWwuY29tIiwiaWF0IjoxNzA0MDE0OTkwfQ.pX2sYaXcj6a1RUxHFlgPaV6z8AyTyMdOzWA0RWyNW5o
+Content-Type: application/json
+
+{"title": "New Card TEST", "subtitle": "subtitle", "description": "Some Description", "phone": "0545302344", "email": "somebus@gmail.com", "web": "bizcards.co.il", "address": {"city": "Tel-Aviv", "houseNumber": 21, "street": "Allenby", "zip": "124", "country": "Israel"}}
+
+### EDIT BIZ NUMBER:
+
+PATCH http://localhost:8000/api/v1/cards/change-biz-number/658ee3c57ac94938b0cef954
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imtlbm55MTJAZ21haWwuY29tIiwiaWF0IjoxNzA0MDE1NzM3fQ.pi7dGwXeQ4zPNkDG8XAhqiJ33p16vBZgYgRi1n8olnk
+Content-Type: application/json
+
+{"bizNumber": 744126}
